@@ -10,7 +10,20 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>spring-mvc</module>
+        <module>spring-el</module>
     </modules>
 
+    <properties>
+        <spring.version>4.3.9.RELEASE</spring.version>
+    </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>
