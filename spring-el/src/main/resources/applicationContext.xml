@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<context:component-scan base-package="com.jd.jr.bean" />
+
+	<bean id="numberGuess" class="com.jd.jr.bean.NumberGuess">
+		<property name="randomNumber" value="#{ T(java.lang.Math).random() * 100.0 }"/>
+	</bean>
+
+	<bean id="taxCalculator" class="com.jd.jr.bean.TaxCalculator">
+		<property name="defaultLocale" value="#{ cityProperties['user.region'] }"/>
+	</bean>
+
+	<bean id="shapeGuess" class="com.jd.jr.bean.ShapeGuess">
+		<property name="initialShapeSeed" value="#{ numberGuess.randomNumber }" />
+	</bean>
+
+	<util:properties id="cityProperties" location="classpath:props/city.properties" />
+</beans>
