@@ -13,6 +13,9 @@ public class Inventor {
     private Date birthday;
     private String nationality;
 
+    public Inventor() {
+    }
+
     public Inventor(String name, Date birthday, String nationality) {
         this.name = name;
         this.birthday = birthday;

@@ -2,6 +2,7 @@ package com.jd.jr.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -11,7 +12,9 @@ import java.util.Properties;
  */
 public class LRBean {
 	private Properties userInfo;
-	private List<Job> job;
+	private List<City> cities;
+	private Job[] job;
+	private Map<Integer, String> favourite;
 
 	public Properties getUserInfo() {
 		return userInfo;
@@ -21,12 +24,44 @@ public class LRBean {
 		this.userInfo = userInfo;
 	}
 
-	public List<Job> getJob() {
+	public List<City> getCities() {
+		return cities;
+	}
+
+	public void setCities(List<City> cities) {
+		this.cities = cities;
+	}
+
+	public Job[] getJob() {
 		return job;
 	}
 
-	public void setJob(List<Job> job) {
+	public void setJob(Job[] job) {
 		this.job = job;
+	}
+
+	public Map<Integer, String> getFavourite() {
+		return favourite;
+	}
+
+	public void setFavourite(Map<Integer, String> favourite) {
+		this.favourite = favourite;
+	}
+
+	public static class City {
+		private String name;
+
+		public City(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 
 	public static class Job {
