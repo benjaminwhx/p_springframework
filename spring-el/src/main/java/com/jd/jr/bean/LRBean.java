@@ -62,6 +62,13 @@ public class LRBean {
 		public void setName(String name) {
 			this.name = name;
 		}
+
+		@Override
+		public String toString() {
+			return "City{" +
+					"name='" + name + '\'' +
+					'}';
+		}
 	}
 
 	public static class Job {
@@ -77,6 +84,13 @@ public class LRBean {
 
 		public void setName(String name) {
 			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return "Job{" +
+					"name='" + name + '\'' +
+					'}';
 		}
 	}
 }

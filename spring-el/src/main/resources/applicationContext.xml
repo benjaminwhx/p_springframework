@@ -16,8 +16,11 @@
 		<property name="defaultLocale" value="#{ cityProperties['user.region'] }"/>
 	</bean>
 
+	<!--<bean id="shapeGuess" class="com.jd.jr.bean.ShapeGuess">-->
+		<!--<property name="initialShapeSeed" value="#{ numberGuess.randomNumber }" />-->
+	<!--</bean>-->
 	<bean id="shapeGuess" class="com.jd.jr.bean.ShapeGuess">
-		<property name="initialShapeSeed" value="#{ numberGuess.randomNumber }" />
+		<property name="initialShapeSeed" value="#{ @numberGuess.randomNumber }" />
 	</bean>
 
 	<util:properties id="cityProperties" location="classpath:props/city.properties" />

@@ -1,12 +1,14 @@
 package com.jd.jr;
 
-import com.jd.jr.bean.Inventor;
-import com.jd.jr.bean.LRBean;
-import com.jd.jr.bean.SomeCustomObject;
+import com.jd.jr.bean.*;
 import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
+import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -296,11 +298,116 @@ public class LanguageReferenceTest {
 		context2.setRootObject(someObject);
 		context2.setVariable("name", "kocko");
 		String expression = "#root.stringLength(#name) == 5";
-		Boolean compareLength = parser.parseExpression(expression).getValue(context2, Boolean.class);
-		System.out.println(compareLength);
+		Boolean compare = parser.parseExpression(expression).getValue(context2, Boolean.class);
+		System.out.println(compare);
 	}
 
-	public static void main(String[] args) {
+	/**
+	 * 功能
+	 * 您可以通过注册能够在表达式字符串中调用的用户定义的函数来扩展SpEL。 该功能通过方法使用StandardEvaluationContext进行注册。
+	 * @throws NoSuchMethodException
+	 */
+	private void testFunction() throws NoSuchMethodException {
+		StandardEvaluationContext context = new StandardEvaluationContext();
+		context.registerFunction("reverseString", StringUtils.class.getDeclaredMethod("reverseString", String.class));
+		String value = parser.parseExpression("#reverseString('hello')").getValue(context, String.class);
+		System.out.println(value);	// olleh
+	}
+
+	private void testBean() {
+		StandardEvaluationContext context = new StandardEvaluationContext();
+		context.setBeanResolver(new BeanFactoryResolver(new ClassPathXmlApplicationContext(new String[] {"applicationContext.xml"})));
+
+		Double value = parser.parseExpression("@numberGuess.randomNumber").getValue(context, double.class);
+		System.out.println(value);
+	}
+
+	/**
+	 * 三元运算符 (If-Then-Else)
+	 */
+	private void testTernaryOperator() {
+		String falseString = parser.parseExpression(
+				"false ? 'trueExp' : 'falseExp'").getValue(String.class);
+		System.out.println(falseString);
+	}
+
+	/**
+	 * Elvis操作符
+	 * Elvis操作符缩短了三元操作符语法，并以Groovy语言使用。 通过三元运算符语法，您通常必须重复一次变量两次
+	 */
+	private void testElvis() {
+		Inventor inventor = new Inventor("benjamin", new Date(), "beijing");
+		StandardEvaluationContext context = new StandardEvaluationContext(inventor);
+		String name = parser.parseExpression("Name?:'caroline'").getValue(context, String.class);
+		System.out.println(name);	// benjamin
+
+		inventor.setName(null);
+
+		name = parser.parseExpression("Name?:'caroline'").getValue(context, String.class);
+		System.out.println(name);	// caroline
+	}
+
+	/**
+	 * 安全导航运算符 ?.
+	 * 安全导航运算符用于避免NullPointerException并来自Groovy语言。 通常当您对对象的引用时，您可能需要在访问对象的方法或属性之前验证它不为空。 为了避免这种情况，安全导航运算符将简单地返回null而不是抛出异常。
+	 */
+	private void testSafeNavigationOperator() {
+		Inventor tesla = new Inventor("benjamin", new Date(), "beijing");
+
+		StandardEvaluationContext context = new StandardEvaluationContext(tesla);
+
+		String month = parser.parseExpression("birthday?.month").getValue(context, String.class);
+		System.out.println(month); // 6
+
+		tesla.setBirthday(null);
+
+		month = parser.parseExpression("birthday?.month").getValue(context, String.class);
+
+		System.out.println(month); // null - does not throw NullPointerException!!!
+	}
+
+	/**
+	 * 集合选择
+	 * 选择使用语法.?[selectionExpression]。 这将过滤收集并返回一个包含原始元素子集的新集合。
+	 * 例如，选择将使我们能够轻松得到Serbian发明家名单：
+	 */
+	private void testCollectionSelection() {
+		List<LRBean.City> cities = new ArrayList<>();
+		cities.add(new LRBean.City("beijing"));
+		cities.add(new LRBean.City("hongkong"));
+		cities.add(new LRBean.City("tianjin"));
+		Map<Integer, String> favourites = new HashMap<>();
+		favourites.put(1, "ball");
+		favourites.put(2, "book");
+		favourites.put(3, "computer");
+		LRBean bean = new LRBean();
+		bean.setCities(cities);
+		bean.setFavourite(favourites);
+		StandardEvaluationContext context = new StandardEvaluationContext(bean);
+		List<LRBean.City> list = (List<LRBean.City>) parser.parseExpression("cities.?[name.contains('ng')]").getValue(context);
+		System.out.println(list);	// [City{name='beijing'}, City{name='hongkong'}]
+
+		Map newMap = parser.parseExpression("favourite.?[value.startsWith('b')]").getValue(context, Map.class);
+		System.out.println(newMap);
+	}
+
+	/**
+	 * 表达式模板
+	 * 表达式模板允许文字文本与一个或多个运算操作块进行混合。 每个运算操作块都用您可以定义
+	 * 的前缀和后缀字符进行分隔，常用的选择是使用#{ }作为分隔符。
+	 */
+	private void testExpressionTemplate() {
+		String randomPhrase = parser.parseExpression(
+				"random number is #{T(java.lang.Math).random()}", new TemplateParserContext()).getValue(String.class);
+		System.out.println(randomPhrase);
+
+		Inventor inventor = new Inventor("benjamin", new Date(), "beijing");
+		StandardEvaluationContext context = new StandardEvaluationContext(inventor);
+		String value = parser.parseExpression("#{name}", new TemplateParserContext()).getValue(context, String.class);
+		System.out.println(value);
+	}
+
+	public static void main(String[] args) throws NoSuchMethodException {
 		LanguageReferenceTest test = new LanguageReferenceTest();
 //		test.testLiteral();
 //		test.testParameterTypes();
@@ -315,7 +422,14 @@ public class LanguageReferenceTest {
 //		test.testTypes();
 //		test.testConstructor();
 //		test.testContextVariable();
-		test.testThisAndRoot();
+//		test.testThisAndRoot();
+//		test.testFunction();
+//		test.testBean();
+//		test.testTernaryOperator();
+//		test.testElvis();
+//		test.testSafeNavigationOperator();
+//		test.testCollectionSelection();
+		test.testExpressionTemplate();
 	}
 
 	public boolean isMember(String name) {
