@@ -1,14 +1,11 @@
-package com.jd.jr;
+package com.github.spring.el;
 
-import com.jd.jr.bean.*;
-import com.sun.org.apache.xalan.internal.extensions.ExpressionContext;
+import com.github.spring.el.bean.*;
 import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
-import org.springframework.util.Assert;
 
 import java.util.*;
 
@@ -254,7 +251,7 @@ public class LanguageReferenceTest {
 	 */
 	private void testConstructor() {
 		Inventor einstein = parser.parseExpression(
-				"new com.jd.jr.bean.Inventor('Albert Einstein', new java.util.Date(), 'German')")
+				"new Inventor('Albert Einstein', new java.util.Date(), 'German')")
 				.getValue(Inventor.class);
 		System.out.println(einstein);
 	}

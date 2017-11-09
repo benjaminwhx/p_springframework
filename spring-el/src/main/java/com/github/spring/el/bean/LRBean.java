@@ -1,6 +1,5 @@
-package com.jd.jr.bean;
+package com.github.spring.el.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;

@@ -1,9 +1,9 @@
-package com.jd.jr;
+package com.github.spring.el;
 
-import com.jd.jr.bean.FieldValueTestBean;
-import com.jd.jr.bean.NumberGuess;
-import com.jd.jr.bean.ShapeGuess;
-import com.jd.jr.bean.TaxCalculator;
+import com.github.spring.el.bean.NumberGuess;
+import com.github.spring.el.bean.ShapeGuess;
+import com.github.spring.el.bean.TaxCalculator;
+import com.github.spring.el.bean.FieldValueTestBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 

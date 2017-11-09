@@ -1,4 +1,4 @@
-package com.jd.jr.bean;
+package com.github.spring.el.bean;
 
 import org.springframework.expression.ParserContext;
 

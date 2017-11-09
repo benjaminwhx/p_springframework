@@ -1,6 +1,6 @@
-package com.jd.jr;
+package com.github.spring.el;
 
-import com.jd.jr.bean.Inventor;
+import com.github.spring.el.bean.Inventor;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
