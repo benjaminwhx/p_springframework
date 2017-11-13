@@ -14,9 +14,9 @@ import javax.annotation.Resource;
  */
 @ContextConfiguration("classpath:applicationContext.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
-public class ExecuteWithRetryTest  {
+public class ExecuteWithRetryAnnotationTest {
 	@Resource
-	private ExecuteWithRetry excuteWithRetry;
+	private ExecuteWithRetryAnnotation excuteWithRetry;
 
 	@Test
 	public void testExcute(){

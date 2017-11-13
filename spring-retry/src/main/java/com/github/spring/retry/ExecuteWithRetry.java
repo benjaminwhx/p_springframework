@@ -1,40 +1,41 @@
 package com.github.spring.retry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.stereotype.Service;
+import org.springframework.retry.RecoveryCallback;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
+import org.springframework.retry.policy.SimpleRetryPolicy;
+import org.springframework.retry.support.RetryTemplate;
+
+import java.util.Collections;
 
 /**
  * User: 吴海旭
- * Date: 2017-11-08
- * Time: 下午8:14
+ * Date: 2017-11-13
+ * Time: 下午8:17
  */
-@Service
 public class ExecuteWithRetry {
-	private static final Logger logger = LoggerFactory.getLogger(ExecuteWithRetry.class);
-	/**
-	 * 重试次数
-	 */
-	private static final int TRY_COUNT = 3;
-	/**
-	 * 暂停1s
-	 */
-	private static final long SLEEP_TIME = 1000;
 
-	/**
-	 * maxAttempts，尝试次数
-	 * backoff，可以指定暂停时间
-	 * value和inclue一样，当出现这些异常时，进行重试
-	 */
-	@Retryable(maxAttempts = TRY_COUNT,
-			backoff = @Backoff(delay = SLEEP_TIME),
-			value = {RuntimeException.class})
-	public void query() {
-		logger.info("execute query,time={}", System.currentTimeMillis());
-		if (true) {
-			throw new RuntimeException("error");
-		}
+	public static void main(String[] args) throws Exception {
+		SimpleRetryPolicy policy = new SimpleRetryPolicy(5, Collections.singletonMap(Exception.class, true));
+		FixedBackOffPolicy fixedBackOffPolicy = new FixedBackOffPolicy();
+		fixedBackOffPolicy.setBackOffPeriod(2000l);
+
+		RetryTemplate template = new RetryTemplate();
+		template.setRetryPolicy(policy);
+		template.setBackOffPolicy(fixedBackOffPolicy);
+		template.execute(new RetryCallback<Void, Exception>() {
+			public Void doWithRetry(RetryContext context) throws Exception {
+				// business logic here
+				System.out.println("business logic");
+				throw new Exception("12");
+			}
+		}, new RecoveryCallback<Void>() {
+			@Override
+			public Void recover(RetryContext context) throws Exception {
+				System.out.println("retry...");
+				return null;
+			}
+		});
 	}
 }
