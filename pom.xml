@@ -12,6 +12,7 @@
         <module>spring-mvc</module>
         <module>spring-el</module>
         <module>spring-retry</module>
+        <module>spring-test</module>
     </modules>
 
     <properties>
